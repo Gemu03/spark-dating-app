@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background: #f7f7f7;
+  -webkit-font-smoothing: antialiased;
+  color: #111;
+}
+
+/* el gradiente de marca que se usa en logo, botones y el match */
+.flame-text {
+  background: linear-gradient(to right, #fd5068, #fe7c4e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.flame-bg {
+  background: linear-gradient(to right, #fd5068, #fe7c4e);
+}
+
+/* el deck no debe permitir scroll ni seleccionar texto al arrastrar */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* scrollbar discreta para la lista de chats */
+.thin-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: #d8d8d8;
+  border-radius: 3px;
+}
