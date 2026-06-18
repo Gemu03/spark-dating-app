@@ -42,8 +42,10 @@ src/
 - `tinder_matches/{matchId}` — un match entre dos usuarios (`matchId` = uids ordenados).
 - `tinder_matches/{matchId}/messages/{msgId}` — mensajes del chat.
 
-Las reglas de seguridad (`firestore.rules`) limitan cada documento a su dueño o a
-los participantes del match.
+Las reglas de seguridad limitan cada documento a su dueño o a los participantes
+del match. Viven en el repositorio central `firebase-firestore-rules` (la base
+Firestore se comparte entre proyectos del portafolio y usa un único ruleset),
+no en este repo.
 
 ## Desarrollo
 
