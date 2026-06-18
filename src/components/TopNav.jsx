@@ -1,0 +1,32 @@
+import { NavLink } from "react-router-dom";
+import { Flame, MessageCircle, User } from "lucide-react";
+
+// barra superior tipo tinder web: logo a la izquierda y los tres accesos.
+export default function TopNav() {
+  const link = ({ isActive }) =>
+    "flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-semibold transition-colors " +
+    (isActive ? "text-flame-start" : "text-gray-400 hover:text-gray-600");
+
+  return (
+    <header className="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <Flame className="text-flame-start" size={26} fill="currentColor" />
+          <span className="font-extrabold text-lg flame-text">tinder</span>
+        </div>
+
+        <nav className="flex items-center gap-1">
+          <NavLink to="/" end className={link}>
+            <Flame size={18} />
+          </NavLink>
+          <NavLink to="/matches" className={link}>
+            <MessageCircle size={18} />
+          </NavLink>
+          <NavLink to="/profile" className={link}>
+            <User size={18} />
+          </NavLink>
+        </nav>
+      </div>
+    </header>
+  );
+}
