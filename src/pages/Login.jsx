@@ -136,8 +136,9 @@ export default function Login() {
           </p>
         </div>
 
-        <p className="text-center text-xs text-white/80 mt-5">
-          Proyecto de portafolio. No afiliado a Tinder ni a Match Group.
+        <p className="text-center text-xs text-white/80 mt-5 leading-relaxed px-2">
+          Este es un proyecto personal hecho para practicar programación. No está
+          afiliado, asociado ni respaldado por Tinder ni por Match Group.
         </p>
       </motion.div>
     </div>

@@ -59,6 +59,11 @@ export default function Profile() {
           </button>
         </div>
       </div>
+
+      <p className="text-center text-xs text-gray-400 mt-5 leading-relaxed px-4">
+        Spark es un proyecto personal creado para practicar programación. No está
+        afiliado, asociado ni respaldado por Tinder ni por Match Group, Inc.
+      </p>
     </div>
   );
 }
