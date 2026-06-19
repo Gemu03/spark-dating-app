@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Flame } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
@@ -10,8 +11,23 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { loginEmail, registerEmail, loginGoogle, error, busy, clearError } =
-    useAuthStore();
+  const {
+    user,
+    profile,
+    initializing,
+    loginEmail,
+    registerEmail,
+    loginGoogle,
+    error,
+    busy,
+    clearError,
+  } = useAuthStore();
+
+  // si ya hay sesion, no tiene sentido quedarse en el login: redirige segun si
+  // el perfil ya esta creado o no. esto evita el "se queda cargado".
+  if (!initializing && user) {
+    return <Navigate to={profile ? "/" : "/onboarding"} replace />;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();

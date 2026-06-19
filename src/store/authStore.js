@@ -3,6 +3,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   onAuthStateChanged,
   updateProfile,
@@ -32,6 +34,12 @@ export const useAuthStore = create((set, get) => ({
   busy: false,
 
   init: () => {
+    // si venimos de un login por redirect, recogemos el resultado. esto cubre
+    // los navegadores que bloquean el popup (movil sobre todo).
+    getRedirectResult(auth).catch((err) => {
+      if (err?.code) set({ error: friendlyError(err.code) });
+    });
+
     onAuthStateChanged(auth, async (user) => {
       let profile = null;
       if (user) {
@@ -41,7 +49,8 @@ export const useAuthStore = create((set, get) => ({
           console.error("No se pudo cargar el perfil", err);
         }
       }
-      set({ user, profile, initializing: false });
+      // al resolver la sesion ya no hay nada cargando
+      set({ user, profile, initializing: false, busy: false });
     });
   },
 
@@ -80,8 +89,23 @@ export const useAuthStore = create((set, get) => ({
     set({ busy: true, error: null });
     try {
       await signInWithPopup(auth, googleProvider);
-      set({ busy: false });
+      // no apago busy aqui: onAuthStateChanged actualiza el user y la pantalla
+      // de login redirige sola. asi no se ve un parpadeo del formulario.
     } catch (err) {
+      // si el navegador bloquea el popup, caemos a redirect (no falla en seco)
+      if (
+        err?.code === "auth/popup-blocked" ||
+        err?.code === "auth/cancelled-popup-request" ||
+        err?.code === "auth/operation-not-supported-in-environment"
+      ) {
+        try {
+          await signInWithRedirect(auth, googleProvider);
+          return;
+        } catch (redirErr) {
+          set({ busy: false, error: friendlyError(redirErr.code) });
+          throw redirErr;
+        }
+      }
       set({ busy: false, error: friendlyError(err.code) });
       throw err;
     }
