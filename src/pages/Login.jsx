@@ -54,7 +54,7 @@ export default function Login() {
       >
         <div className="flex items-center justify-center gap-2 mb-8 text-white">
           <Flame size={34} fill="currentColor" />
-          <span className="font-extrabold text-3xl">tinder</span>
+          <span className="font-extrabold text-3xl">Spark</span>
         </div>
 
         <div className="rounded-2xl bg-white p-8 shadow-card">
@@ -135,6 +135,10 @@ export default function Login() {
             </button>
           </p>
         </div>
+
+        <p className="text-center text-xs text-white/80 mt-5">
+          Proyecto de portafolio. No afiliado a Tinder ni a Match Group.
+        </p>
       </motion.div>
     </div>
   );
