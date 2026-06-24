@@ -1,67 +1,151 @@
-# Tinder Clone
+<div align="center">
 
-Clon funcional de Tinder hecho como aplicación full‑stack. No es una demo: el
-registro, los swipes, los matches y el chat se guardan de verdad en la nube y
-los usuarios reales aparecen entre sí en la pila de descubrimiento.
+# Spark — Dating App
 
-## Funcionalidades
+**A full-stack dating web app** with real swipe-to-match, mutual matching, and live chat — built with React 18 and Firebase.
 
-- Registro e inicio de sesión con correo/contraseña y con Google (Firebase Auth).
-- Onboarding para crear tu perfil (nombre, edad, ocupación, bio y foto).
-- Pila de descubrimiento con tarjetas que se arrastran (swipe) como en el original,
-  con sellos LIKE / NOPE y cambio de foto al tocar los lados.
-- Matching real entre usuarios: si dos personas se dan like mutuo, hay match.
-- Tres perfiles "semilla" (bots) que siempre están disponibles, hacen match al
-  instante cuando los likeas y responden en el chat para que la app se sienta viva.
-- Lista de matches y chat en tiempo real (Firestore `onSnapshot`).
-- Perfil propio con opción de cerrar sesión.
+[![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-2-646cff?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Firebase](https://img.shields.io/badge/Firebase-9-ffca28?logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-gestures-ff4d8d?logo=framer&logoColor=white)](https://www.framer.com/motion/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Stack
+**[🌐 Live Demo](https://spark.giovanni-moreno.com)** · Built by [Giovanni Moreno](https://giovanni-moreno.com)
 
-- Vite + React 18 + React Router 6
-- Tailwind CSS
-- lucide-react (iconos) y framer-motion (gestos y animaciones)
-- Zustand para el estado
-- Firebase: Authentication + Cloud Firestore
+</div>
 
-## Estructura
+---
+
+## Overview
+
+**Spark** is a fully functional dating app — not a static demo. Registration, swipes, matches, and chat are persisted in the cloud (Cloud Firestore), and real users appear in each other's discovery deck. It's built with **React 18**, **Vite**, **Tailwind CSS**, **Zustand**, **Framer Motion**, and **Firebase** (Authentication + Firestore).
+
+To keep the experience lively while the user base grows, Spark seeds a few **bot profiles** that match instantly and reply in chat.
+
+> ⚠️ This is an independent portfolio project inspired by swipe-based dating apps. It is **not affiliated with, endorsed by, or connected to** Tinder or Match Group.
+
+> Keywords: React, Firebase, Firestore, dating app, swipe, real-time chat, Zustand, Framer Motion, Tailwind CSS, full-stack web app.
+
+## ✨ Features
+
+| | Feature |
+|---|---|
+| 🔐 | **Authentication** — email/password and Google sign-in (with popup → redirect fallback for mobile) |
+| 📝 | **Onboarding** — create your profile (name, age, job, bio, photo) |
+| 🃏 | **Swipe deck** — drag-to-swipe cards with LIKE / NOPE stamps and tap-to-cycle photos |
+| 💞 | **Real mutual matching** — a match happens only when two users like each other |
+| 🤖 | **Seed bots** — always-available profiles that match instantly and reply in chat |
+| 💬 | **Real-time chat** — live messages via Firestore `onSnapshot` with last-message preview |
+| 📋 | **Matches list** — sorted by most recent activity |
+| 👤 | **Profile** — view your own profile and log out |
+
+## 🧱 Tech Stack
+
+**Frontend:** React 18 · Vite · React Router 6 · Tailwind CSS · Zustand · Framer Motion · lucide-react
+
+**Backend (Firebase):** Firebase Authentication · Cloud Firestore (real-time) · Firebase Hosting
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    U[User] --> SPA["React SPA (Vite)"]
+
+    subgraph Client
+        SPA --> RP[ProtectedRoute<br/>auth + profile guard]
+        SPA --> AZ["authStore (Zustand)"]
+        SPA --> DZ["deckStore (Zustand)"]
+        SPA --> DAL["lib/firestore.js<br/>profiles · swipes · matches · chat"]
+    end
+
+    DAL -->|Auth| FA[Firebase Authentication]
+    DAL -->|real-time| FS[(Cloud Firestore)]
+    BOTS["data/bots.js<br/>seed profiles"] --> DZ
+```
+
+### Matching Flow
+
+```mermaid
+sequenceDiagram
+    participant A as User A
+    participant FS as Firestore
+    participant B as User B
+
+    A->>FS: like(B)  (tinder_swipes/A/likes/B)
+    FS-->>A: check reverse like (B -> A?)
+    alt Mutual like
+        FS->>FS: create match (matchId = sorted uids)
+        FS-->>A: It's a match! 🎉
+        FS-->>B: It's a match! 🎉
+    else No reverse like yet
+        FS-->>A: keep swiping
+    end
+```
+
+### Data Model (Firestore)
+
+```
+tinder_profiles/{uid}                          -> public profile (readable by authenticated users)
+tinder_swipes/{uid}/likes/{targetUid}          -> likes/nopes (private per user)
+tinder_matches/{matchId}                       -> a match between two users (matchId = sorted uids)
+tinder_matches/{matchId}/messages/{msgId}      -> chat messages
+```
+
+Security rules restrict each document to its owner or to the participants of the match. They live in a central `firebase-firestore-rules` repository (the Firestore base is shared across portfolio projects with a single ruleset), not in this repo.
+
+## 📂 Project Structure
 
 ```
 src/
-  lib/        firebase.js (init) y firestore.js (perfiles, swipes, matches, chat)
-  store/      authStore.js, deckStore.js
-  data/       bots.js (perfiles semilla y respuestas)
-  components/ SwipeCard, ActionButtons, MatchModal, ChatBubble, TopNav, ...
-  pages/      Login, Onboarding, Discover, Matches, Chat, Profile
+  lib/         firebase.js (init) and firestore.js (profiles, swipes, matches, chat)
+  store/       authStore.js, deckStore.js
+  data/        bots.js (seed profiles and replies)
+  components/  SwipeCard, ActionButtons, MatchModal, ChatBubble, TopNav, ...
+  pages/       Login, Onboarding, Discover, Matches, Chat, Profile
 ```
 
-## Modelo de datos (Firestore)
+## 🚀 Getting Started
 
-- `tinder_profiles/{uid}` — perfil público, legible por cualquier usuario autenticado.
-- `tinder_swipes/{uid}/likes/{targetUid}` — likes/nopes, privados de cada usuario.
-- `tinder_matches/{matchId}` — un match entre dos usuarios (`matchId` = uids ordenados).
-- `tinder_matches/{matchId}/messages/{msgId}` — mensajes del chat.
+### Prerequisites
+- Node.js 18+ and npm
+- A Firebase project with Authentication (Email/Password + Google) and Cloud Firestore enabled
 
-Las reglas de seguridad limitan cada documento a su dueño o a los participantes
-del match. Viven en el repositorio central `firebase-firestore-rules` (la base
-Firestore se comparte entre proyectos del portafolio y usa un único ruleset),
-no en este repo.
+### Installation
 
-## Desarrollo
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Gemu03/spark-dating-app.git
+   cd spark-dating-app
+   ```
 
-```bash
-npm install
-cp .env.example .env   # rellena con las claves de tu proyecto Firebase
-npm run dev
-```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Build
+3. Copy `.env.example` to `.env` and fill in your Firebase web SDK keys (`VITE_FIREBASE_*`):
+   ```bash
+   cp .env.example .env
+   ```
 
-```bash
-npm run build
-npm run preview
-```
+4. Start the dev server:
+   ```bash
+   npm run dev
+   ```
 
-## Variables de entorno
+### Scripts
 
-Ver `.env.example`. Todas las claves son del SDK web de Firebase (`VITE_FIREBASE_*`).
+| Command           | Description                       |
+|-------------------|-----------------------------------|
+| `npm run dev`     | Start the Vite dev server         |
+| `npm run build`   | Build for production to `dist/`   |
+| `npm run preview` | Preview the production build      |
+
+## 📸 Screenshots
+
+> _Add screenshots/GIFs here (e.g. `docs/swipe.gif`, `docs/match.png`) to showcase swiping, matches, and chat._
+
+## 📝 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
