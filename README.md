@@ -144,7 +144,11 @@ src/
 
 ## 📸 Screenshots
 
-> _Add screenshots/GIFs here (e.g. `docs/swipe.gif`, `docs/match.png`) to showcase swiping, matches, and chat._
+<p align="center">
+  <img src="docs/screenshot.webp" alt="Spark dating app — swipe deck" width="420" />
+</p>
+
+<p align="center"><i>Swipe-to-match deck. Try the live app at <a href="https://spark.giovanni-moreno.com">spark.giovanni-moreno.com</a>.</i></p>
 
 ## 📝 License
 
